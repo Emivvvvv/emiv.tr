@@ -3,6 +3,6 @@
   "framework": null,
   "devCommand": null,
   "installCommand": null,
-  "buildCommand": "./install.sh",
+  "buildCommand": "sh install.sh",
   "outputDirectory": "dist"
 }
