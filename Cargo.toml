@@ -12,4 +12,4 @@ ratzilla = "0.0.6"
 textwrap = "0.16.1"
 gridlife = "0.0.2"
 unicode-width = "0.2.0"
-
+tachyonfx = { version = "0.15.0", default-features = false, features = ["web-time"] }
