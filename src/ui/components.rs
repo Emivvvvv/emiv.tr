@@ -12,11 +12,12 @@ use ratzilla::widgets::Hyperlink;
 
 use crate::data::*;
 
-pub fn render_whoami(frame: &mut Frame<'_>, description_area: Rect) {
+pub fn render_whoami(frame: &mut Frame<'_>, description_area: Rect, scroll: u16) {
     frame.render_widget(
         Paragraph::new(DESCRIPTION)
             .wrap(Wrap { trim: true })
             .left_aligned()
+            .scroll((scroll, 0)) // Add scrolling using the scroll position
             .block(Block::bordered().title("whoami".bold().underlined())),
         description_area,
     );
@@ -47,7 +48,7 @@ pub fn render_education(frame: &mut Frame<'_>, education_area: Rect) {
     );
 }
 
-pub fn render_projects(frame: &mut Frame<'_>, projects_area: Rect) {
+pub fn render_projects(frame: &mut Frame<'_>, projects_area: Rect, scroll: u16) {
     let mut lines = Vec::new();
 
     for (name, description) in PROJECTS.iter() {
@@ -65,6 +66,7 @@ pub fn render_projects(frame: &mut Frame<'_>, projects_area: Rect) {
         Paragraph::new(text)
             .wrap(Wrap { trim: true })
             .left_aligned()
+            .scroll((scroll, 0))
             .block(Block::bordered().title("Projects".bold().underlined())),
         projects_area,
     );
@@ -95,7 +97,7 @@ pub fn render_contributions(frame: &mut Frame<'_>, contributions_area: Rect) {
     );
 }
 
-pub fn render_experiences(frame: &mut Frame<'_>, projects_area: Rect) {
+pub fn render_experiences(frame: &mut Frame<'_>, projects_area: Rect, scroll: u16) {
     let mut lines = Vec::new();
 
     for (company, title, duration, description) in EXPERIENCES.iter() {
@@ -111,14 +113,13 @@ pub fn render_experiences(frame: &mut Frame<'_>, projects_area: Rect) {
         lines.push(Line::from(format!("• {}", description)));
         lines.push(Line::default());
     }
-    lines.push(Line::from("Imma add scrolling here. There's just not enough space man.").bold());
-
     let text = Text::from(lines);
 
     frame.render_widget(
         Paragraph::new(text)
             .wrap(Wrap { trim: true })
             .left_aligned()
+            .scroll((scroll, 0))
             .block(Block::bordered().title("Experiences".bold().underlined())),
         projects_area,
     );

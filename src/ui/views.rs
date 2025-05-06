@@ -11,7 +11,7 @@ use ratatui::Frame;
 
 pub const BG_COLOR: Color = Color::Rgb(16, 24, 39);
 
-pub fn render_about_me_and_education(frame: &mut Frame, content_area: Rect) {
+pub fn render_about_me_and_education(frame: &mut Frame, content_area: Rect, scroll: u16) {
     let content_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -20,11 +20,11 @@ pub fn render_about_me_and_education(frame: &mut Frame, content_area: Rect) {
         ])
         .split(content_area);
 
-    render_whoami(frame, content_chunks[0]);
+    render_whoami(frame, content_chunks[0], scroll);
     render_education(frame, content_chunks[1]);
 }
 
-pub fn render_projects_and_contributions(frame: &mut Frame, content_area: Rect) {
+pub fn render_projects_and_contributions(frame: &mut Frame, content_area: Rect, scroll: u16) {
     let content_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -33,11 +33,11 @@ pub fn render_projects_and_contributions(frame: &mut Frame, content_area: Rect) 
         ])
         .split(content_area);
 
-    render_projects(frame, content_chunks[0]);
+    render_projects(frame, content_chunks[0], scroll);
     render_contributions(frame, content_chunks[1]);
 }
 
-pub fn render_experiences_and_publications(frame: &mut Frame, content_area: Rect) {
+pub fn render_experiences_and_publications(frame: &mut Frame, content_area: Rect, scroll: u16) {
     let content_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -46,14 +46,19 @@ pub fn render_experiences_and_publications(frame: &mut Frame, content_area: Rect
         ])
         .split(content_area);
 
-    render_experiences(frame, content_chunks[0]);
+    render_experiences(frame, content_chunks[0], scroll);
     render_publications(frame, content_chunks[1]);
 }
 
-pub fn render_ferris_ratatui_and_unsafe_ferris(frame: &mut Frame, long_live_ferris: Rect) {
+pub fn render_ferris_ratatui_and_unsafe_ferris(
+    frame: &mut Frame,
+    long_live_ferris: Rect,
+    scroll: u16,
+) {
     frame.render_widget(
         Paragraph::new(FERRIS_RATATUI_AND_UNSAFE_FERRIS)
             .left_aligned()
+            .scroll((0, scroll))
             .block(
                 Block::bordered().title("Ferris, Ratatui and Unsafe Ferris".bold().underlined()),
             ),

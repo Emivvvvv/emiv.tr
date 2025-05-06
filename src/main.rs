@@ -58,6 +58,12 @@ fn main() -> io::Result<()> {
                 KeyCode::Left | KeyCode::Char('h') | KeyCode::Char('H') => {
                     state.previous_tab();
                 }
+                KeyCode::Down | KeyCode::Char('j') | KeyCode::Char('J') => {
+                    state.scroll_down();
+                }
+                KeyCode::Up | KeyCode::Char('k') | KeyCode::Char('K') => {
+                    state.scroll_up();
+                }
                 _ => {}
             }
         }
@@ -119,7 +125,7 @@ fn main() -> io::Result<()> {
             )
             .block(
                 Block::bordered()
-                    .title_bottom("< h|l >")
+                    .title_bottom("<← h|l →, ↓ j|k ↑>")
                     .title_alignment(Alignment::Right),
             )
             .select(tab_index)
@@ -128,10 +134,22 @@ fn main() -> io::Result<()> {
 
             // Render content based on selected tab
             match tab_index {
-                0 => render_about_me_and_education(frame, content_area),
-                1 => render_projects_and_contributions(frame, content_area),
-                2 => render_experiences_and_publications(frame, content_area),
-                3 => render_ferris_ratatui_and_unsafe_ferris(frame, content_area),
+                0 => render_about_me_and_education(frame, content_area, state.scroll_positions[0]),
+                1 => render_projects_and_contributions(
+                    frame,
+                    content_area,
+                    state.scroll_positions[1],
+                ),
+                2 => render_experiences_and_publications(
+                    frame,
+                    content_area,
+                    state.scroll_positions[2],
+                ),
+                3 => render_ferris_ratatui_and_unsafe_ferris(
+                    frame,
+                    content_area,
+                    state.scroll_positions[3],
+                ),
                 _ => {}
             }
             frame.render_effect(
