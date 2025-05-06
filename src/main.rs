@@ -43,10 +43,10 @@ fn main() -> io::Result<()> {
         move |event| {
             let mut state = app_state.borrow_mut();
             match event.code {
-                KeyCode::Right => {
+                KeyCode::Right | KeyCode::Char('l') | KeyCode::Char('L') => {
                     state.next_tab();
                 }
-                KeyCode::Left => {
+                KeyCode::Left | KeyCode::Char('h') | KeyCode::Char('H') => {
                     state.previous_tab();
                 }
                 _ => {}
@@ -126,7 +126,8 @@ fn render_desktop_view(frame: &mut Frame, area: Rect, tab_index: usize) {
             .map(|t| Line::from(*t))
             .collect::<Vec<Line>>(),
     )
-    .block(Block::bordered())
+    .block(Block::bordered().title_bottom("< h|l >")
+               .title_alignment(Alignment::Right))
     .select(tab_index)
     .highlight_style(Style::default().fg(Color::Gray));
 
