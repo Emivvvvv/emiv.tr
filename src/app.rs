@@ -13,7 +13,7 @@ impl AppState {
             tab_index: 0,
             should_animate: true,
             scroll_positions: [0, 0, 0, 0],
-            max_scroll: [2, 2, 3, 74],
+            max_scroll: [0, 0, 0, 0],
         }
     }
 
@@ -41,5 +41,9 @@ impl AppState {
         if self.scroll_positions[self.tab_index] > 0 {
             self.scroll_positions[self.tab_index] -= 1;
         }
+    }
+
+    pub(crate) fn update_max_scroll(&mut self, tab: usize, new_max: u16) {
+        self.max_scroll[tab] = new_max;
     }
 }

@@ -100,7 +100,7 @@ pub fn render_contributions(frame: &mut Frame<'_>, contributions_area: Rect) {
 pub fn render_experiences(frame: &mut Frame<'_>, projects_area: Rect, scroll: u16) {
     let mut lines = Vec::new();
 
-    for (company, title, duration, description) in EXPERIENCES.iter() {
+    for (company, title, duration, bullet_1, bullet_2) in EXPERIENCES.iter() {
         let mut line = Line::default();
         line.spans
             .push(Span::styled(*company, Style::default().bold()));
@@ -110,7 +110,8 @@ pub fn render_experiences(frame: &mut Frame<'_>, projects_area: Rect, scroll: u1
         line.spans.push(Span::raw(*duration));
         lines.push(line);
 
-        lines.push(Line::from(format!("• {}", description)));
+        lines.push(Line::from(format!("• {}", bullet_1)));
+        lines.push(Line::from(format!("• {}", bullet_2)));
         lines.push(Line::default());
     }
     let text = Text::from(lines);

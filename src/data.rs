@@ -45,22 +45,28 @@ pub const CONTRIBUTIONS: &[(&str, &str, &str)] = &[(
     "13 Commits",
 )];
 
-pub const EXPERIENCES: &[(&str, &str, &str, &str)] = &[
+pub const EXPERIENCES: &[(&str, &str, &str, &str, &str)] = &[
     (
         "smartPulse Technology",
         "Connectivity Intern",
         "March 2025 – Still",
-
         "Implemented a internal device setup tool from start to finish using Rust and Ratatui.",
+        "Learned industrial communication protocols and basics of the energy production industry.",
     ),
     (
         "HyperHawk Hyperloop Team",
         "Co-Head of SWE Department",
         "October 2024 – Still",
-
         "Directed the project's development strategy and structure, driving key decision-making processes.",
+        "Developed and deployed MicroPython code for Raspberry Pi.",
     ),
-
+    (
+        "HyperHawk Hyperloop Team",
+        "Software Engineer",
+        "November 2022  – October 2024",
+        "Achieved 3rd place with the team in the International Teknofest Hyperloop Competition, 2023.",
+        "Developed and optimized Arduino and Raspberry Pi code using C++, C, and Golang.",
+    ),
 ];
 
 pub const PUBLICATIONS: &[(&str, &str)] = &[(

@@ -93,6 +93,56 @@ fn main() -> io::Result<()> {
             let mut state = app_state.borrow_mut();
             let tab_index = state.tab_index;
 
+            // Changing max scroll depending on the area.width
+            let tab_title = match area.width {
+                0..=50 => {
+                    for &i in &[0, 1] {
+                        state.update_max_scroll(i, 2);
+                    }
+                    state.update_max_scroll(2, 20);
+                    "<← h|l →, ↓ j|k ↑>"
+                }
+                51..=64 => {
+                    for &i in &[0, 1, 2, 3] {
+                        state.update_max_scroll(i, 0);
+                    }
+                    "<← h|l →>"
+                }
+                65..=100 => {
+                    for &i in &[0, 1] {
+                        state.update_max_scroll(i, 0);
+                    }
+                    state.update_max_scroll(2, 15);
+                    state.update_max_scroll(3, 116 - area.width);
+                    match tab_index {
+                        2 | 3 => "<← h|l →, ↓ j|k ↑>",
+                        _ => "<← h|l →>",
+                    }
+                }
+                101..=115 => {
+                    for &i in &[0, 1, 2] {
+                        state.update_max_scroll(i, 0);
+                    }
+                    state.update_max_scroll(2, 3);
+                    state.update_max_scroll(3, 116 - area.width);
+                    match tab_index {
+                        2 | 3 => "<← h|l →, ↓ j|k ↑>",
+                        _ => "<← h|l →>",
+                    }
+                }
+                _ => {
+                    for &i in &[0, 1, 3] {
+                        state.update_max_scroll(i, 0);
+                    }
+                    state.update_max_scroll(2, 3);
+                    if tab_index == 2 {
+                        "<← h|l →, ↓ j|k ↑>"
+                    } else {
+                        "<← h|l →>"
+                    }
+                }
+            };
+
             // Check if we need to reset the animation
             if state.should_animate {
                 content_effect = CREATE_CONTENT_EFFECT();
@@ -125,7 +175,7 @@ fn main() -> io::Result<()> {
             )
             .block(
                 Block::bordered()
-                    .title_bottom("<← h|l →, ↓ j|k ↑>")
+                    .title_bottom(tab_title)
                     .title_alignment(Alignment::Right),
             )
             .select(tab_index)
