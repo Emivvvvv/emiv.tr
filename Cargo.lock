@@ -222,6 +222,7 @@ name = "emiv-website"
 version = "0.1.0"
 dependencies = [
  "color-eyre",
+ "console_error_panic_hook",
  "gridlife",
  "ratatui",
  "ratzilla",

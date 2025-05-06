@@ -18,6 +18,7 @@ use ratzilla::{DomBackend, WebRenderer};
 use std::cell::RefCell;
 use std::io;
 use std::rc::Rc;
+use tachyonfx::{Duration, EffectRenderer, Shader};
 
 mod data;
 use data::*;
@@ -28,14 +29,22 @@ use app::*;
 mod ui;
 use ui::*;
 
+mod animations;
+use animations::*;
+
 const TAB_TITLES: &[&str] = &["About Me", "Projects", "Experiences", ":)"];
 
 fn main() -> io::Result<()> {
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     let backend = DomBackend::new()?;
     let terminal = Terminal::new(backend)?;
     let size = terminal.size()?;
     let mut grid = Grid::new_random(size.width.into(), size.height.into());
     let app_state = Rc::new(RefCell::new(AppState::new()));
+
+    // Define our effects
+    let mut content_effect = CREATE_CONTENT_EFFECT();
+    let mut banner_effect = CREATE_BANNER_EFFECT();
 
     // Set up key event handling
     terminal.on_key_event({
@@ -75,8 +84,63 @@ fn main() -> io::Result<()> {
         if is_mobile() {
             render_mobile_view(frame, area);
         } else {
-            let tab_index = app_state.borrow().tab_index;
-            render_desktop_view(frame, area, tab_index);
+            let mut state = app_state.borrow_mut();
+            let tab_index = state.tab_index;
+
+            // Check if we need to reset the animation
+            if state.should_animate {
+                content_effect = CREATE_CONTENT_EFFECT();
+                state.should_animate = false;
+            }
+
+            let constraints = [
+                Constraint::Length(BANNER.lines().count() as u16 + 1), // Banner
+                Constraint::Length(3),                                 // Tabs
+                Constraint::Length(16),                                // Contents
+                Constraint::Length(LINKS.len() as u16 + 2),            // Links
+            ];
+            render_background(frame, area, None, &constraints);
+
+            // Split the area into sections
+            let [banner_area, tabs_area, content_area, links_area] =
+                Layout::vertical(constraints).areas(area);
+
+            render_banner(frame, banner_area);
+            if banner_effect.running() {
+                frame.render_effect(&mut banner_effect, banner_area, Duration::from_millis(100));
+            }
+
+            // Render tabs
+            let tabs = Tabs::new(
+                TAB_TITLES
+                    .iter()
+                    .map(|t| Line::from(*t))
+                    .collect::<Vec<Line>>(),
+            )
+            .block(
+                Block::bordered()
+                    .title_bottom("< h|l >")
+                    .title_alignment(Alignment::Right),
+            )
+            .select(tab_index)
+            .highlight_style(Style::default().fg(Color::Gray));
+            frame.render_widget(tabs, tabs_area);
+
+            // Render content based on selected tab
+            match tab_index {
+                0 => render_about_me_and_education(frame, content_area),
+                1 => render_projects_and_contributions(frame, content_area),
+                2 => render_experiences_and_publications(frame, content_area),
+                3 => render_ferris_ratatui_and_unsafe_ferris(frame, content_area),
+                _ => {}
+            }
+            frame.render_effect(
+                &mut content_effect,
+                content_area,
+                Duration::from_millis(100),
+            );
+
+            render_links(frame, links_area);
         }
     });
 
@@ -103,44 +167,4 @@ fn render_mobile_view(frame: &mut Frame, area: Rect) {
 
     // Render main website link
     frame.render_widget(Hyperlink::new("https://dev.emiv.online"), links_area);
-}
-
-fn render_desktop_view(frame: &mut Frame, area: Rect, tab_index: usize) {
-    let constraints = [
-        Constraint::Length(BANNER.lines().count() as u16 + 1), // Banner
-        Constraint::Length(3),                                 // Tabs
-        Constraint::Length(16),                                // Contents
-        Constraint::Length(LINKS.len() as u16 + 2),            // Links
-    ];
-    render_background(frame, area, None, &constraints);
-
-    // Split the area into sections
-    let [banner_area, tabs_area, content_area, links_area] =
-        Layout::vertical(constraints).areas(area);
-
-    render_banner(frame, banner_area);
-    // Render tabs
-    let tabs = Tabs::new(
-        TAB_TITLES
-            .iter()
-            .map(|t| Line::from(*t))
-            .collect::<Vec<Line>>(),
-    )
-    .block(Block::bordered().title_bottom("< h|l >")
-               .title_alignment(Alignment::Right))
-    .select(tab_index)
-    .highlight_style(Style::default().fg(Color::Gray));
-
-    frame.render_widget(tabs, tabs_area);
-
-    // Render content based on selected tab
-    match tab_index {
-        0 => render_about_me_and_education(frame, content_area),
-        1 => render_projects_and_contributions(frame, content_area),
-        2 => render_experiences_and_publications(frame, content_area),
-        3 => render_ferris_ratatui_and_unsafe_ferris(frame, content_area),
-        _ => {}
-    }
-
-    render_links(frame, links_area);
 }

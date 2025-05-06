@@ -9,6 +9,8 @@ use ratatui::prelude::{Color, Line, Style, Stylize, Text};
 use ratatui::widgets::{Block, BorderType, Clear, Paragraph};
 use ratatui::Frame;
 
+pub const BG_COLOR: Color = Color::Rgb(16, 24, 39);
+
 pub fn render_about_me_and_education(frame: &mut Frame, content_area: Rect) {
     let content_chunks = Layout::default()
         .direction(Direction::Vertical)
